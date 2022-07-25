@@ -1,8 +1,8 @@
-package com.itheima.web.response;
+package com.itheima.web;
 
 /**
  * @Author LIXUBO
- * @Date 2022-07-25 22:38
+ * @Date 2022-07-25 22:36
  * @description
  * @Version 1.0
  */
@@ -19,45 +19,43 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 
-@WebServlet("/registerServlet")
-public class registerServlet extends HttpServlet {
+@WebServlet("/loginServlet")
+public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        //设置编码
+        //设置字符输入流的编码
         request.setCharacterEncoding("UTF-8");
-        //接收用户数据
+
+        //1. 接收用户名和密码
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-
-        //封装用户对象
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(password);
-
-        // 调用mapper ，根据用户名查询用户对象
+        // 2.调用mybatis完成查询
         // 2.1 获取 sqlSessionFactory对象
-        SqlSessionFactory sqlSessionFactory = SqlSessionFactoryUtils.getSqlSessionFactory();
+//        String resource = "mybatis-config.xml";
+//        InputStream inputStream = Resources.getResourceAsStream(resource);
+//        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
 
+        SqlSessionFactory sqlSessionFactory = SqlSessionFactoryUtils.getSqlSessionFactory();
         // 2.2 获取 sqlSession对象
         SqlSession sqlSession = sqlSessionFactory.openSession();
         // 2.3 获取mapper
         USerMapper userMapper = sqlSession.getMapper(USerMapper.class);
         // 2.4 调用方法
-        User user1 = userMapper.selectByUsername(username);
+        User user = userMapper.select(username, password);
+        // 2.5 释放资源
+        sqlSession.close();
 
-        // 判断用户对象是否为null
-        if (user1 == null) {
-            //用户名不存在，添加用户
-            userMapper.add(user);
-            //提交事务
-            sqlSession.commit();
-            //释放资源
-            sqlSession.close();
+        response.setContentType("text/html;charset=utf-8");
+        PrintWriter writer = response.getWriter();
+        // 3. 判断user是否为null
+        if (user != null) {
+            //登录成功
+            writer.write("登录成功");
         } else {
-            //用户名已经存在，给出提示
-            response.setContentType("text/html;charset=utf-8");
-            response.getWriter().write("用户名已经存在");
+            //登录失败
+            writer.write("登录失败");
         }
     }
 
