@@ -62,6 +62,7 @@ public class registerServlet extends HttpServlet {
             //用户名已经存在，给出提示
             response.setContentType("text/html;charset=utf-8");
             response.getWriter().write("用户名已经存在");
+            //
         }
     }
 
