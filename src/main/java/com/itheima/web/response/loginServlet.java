@@ -9,16 +9,16 @@ package com.itheima.web.response;
 
 import com.itheima.mapper.USerMapper;
 import com.itheima.pojo.User;
-import org.apache.ibatis.io.Resources;
+import com.itheima.util.SqlSessionFactoryUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-import javax.servlet.annotation.*;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 
 @WebServlet("/loginServlet")
@@ -33,10 +33,11 @@ public class loginServlet extends HttpServlet {
         String password = request.getParameter("password");
         // 2.调用mybatis完成查询
         // 2.1 获取 sqlSessionFactory对象
-        String resource = "mybatis-config.xml";
-        InputStream inputStream = Resources.getResourceAsStream(resource);
-        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+//        String resource = "mybatis-config.xml";
+//        InputStream inputStream = Resources.getResourceAsStream(resource);
+//        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
 
+        SqlSessionFactory sqlSessionFactory = SqlSessionFactoryUtils.getSqlSessionFactory();
         // 2.2 获取 sqlSession对象
         SqlSession sqlSession = sqlSessionFactory.openSession();
         // 2.3 获取mapper

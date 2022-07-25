@@ -9,10 +9,9 @@ package com.itheima.web.response;
 
 import com.itheima.mapper.USerMapper;
 import com.itheima.pojo.User;
-import org.apache.ibatis.io.Resources;
+import com.itheima.util.SqlSessionFactoryUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -20,7 +19,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.InputStream;
 
 @WebServlet("/registerServlet")
 public class registerServlet extends HttpServlet {
@@ -39,9 +37,7 @@ public class registerServlet extends HttpServlet {
 
         // 调用mapper ，根据用户名查询用户对象
         // 2.1 获取 sqlSessionFactory对象
-        String resource = "mybatis-config.xml";
-        InputStream inputStream = Resources.getResourceAsStream(resource);
-        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+        SqlSessionFactory sqlSessionFactory = SqlSessionFactoryUtils.getSqlSessionFactory();
 
         // 2.2 获取 sqlSession对象
         SqlSession sqlSession = sqlSessionFactory.openSession();
@@ -62,7 +58,6 @@ public class registerServlet extends HttpServlet {
             //用户名已经存在，给出提示
             response.setContentType("text/html;charset=utf-8");
             response.getWriter().write("用户名已经存在");
-            //
         }
     }
 
